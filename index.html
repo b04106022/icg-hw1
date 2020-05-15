@@ -11,6 +11,42 @@
 		to implement flat, gouraud and phong shading
 	 -->
 		<script id="flat-fs" type="x-shader/x-fragment">
+			#extension GL_OES_standard_derivatives : enable
+			precision highp float;
+			
+			uniform float uAmbientCoefficient;
+			uniform float uDiffuseCoefficient;
+			uniform float uSpecularCoefficient; 
+			uniform float uMaterialShininess;
+			
+			uniform vec3 uAmbientColor;
+			uniform vec3 uDiffuseColor;
+			uniform vec3 uSpecularColor;
+			
+			varying vec3 vVertex;
+			varying vec3 vN;
+			varying vec3 vL;
+			varying vec3 vFrontColor;
+			
+			void main(void) { 
+				vec3 dx = dFdx(vVertex);
+				vec3 dy = dFdy(vVertex);
+				
+				vec3 N = normalize(cross(dx, dy));
+				vec3 L = normalize(vL);
+				// Lambert's cosine law
+				float lambertian = max(dot(N, L), 0.0);
+				float specular = 0.0;
+				if(lambertian > 0.0) {
+					vec3 R = reflect(-L, N);
+					vec3 V = normalize(-vVertex);
+					// Compute the specular term
+					float specAngle = max(dot(R, V), 0.0);
+					specular = pow(specAngle, uMaterialShininess);
+				 }
+				
+				gl_FragColor = vec4(uAmbientColor * uAmbientCoefficient * vFrontColor + uDiffuseColor * uDiffuseCoefficient * vFrontColor * lambertian + uSpecularColor * uSpecularCoefficient * specular, 1.0); 
+			}
 		</script>
 		<script id="gouraud-fs" type="x-shader/x-fragment">
 			precision mediump float; 
@@ -50,7 +86,6 @@
 					specular = pow(specAngle, uMaterialShininess);
 				 }
 				
-				// gl_FragColor = vec4(uAmbientColor * uAmbientCoefficient + uDiffuseColor * uDiffuseCoefficient * lambertian + uSpecularColor * uSpecularCoefficient * specular, 1.0); 
 				gl_FragColor = vec4(uAmbientColor * uAmbientCoefficient * vFrontColor + uDiffuseColor * uDiffuseCoefficient * vFrontColor * lambertian + uSpecularColor * uSpecularCoefficient * specular, 1.0); 
 			}
 		</script>
@@ -66,6 +101,31 @@
 		which is used for texture mappping.
 	 -->
 		<script id="flat-vs" type="x-shader/x-vertex">
+			attribute vec3 aVertexPosition; 
+			attribute vec3 aVertexNormal; 
+			attribute vec3 aFrontColor; 
+
+			uniform mat3 uNMatrix;		
+			uniform mat4 uMVMatrix; 
+			uniform mat4 uPMatrix;
+			
+			uniform vec3 uLightPosition;
+
+			varying vec3 vVertex;
+			varying vec3 vN;
+			varying vec3 vL;
+			varying vec3 vFrontColor;
+			
+			void main(void) { 
+				vec4 mvVertex4 = uMVMatrix * vec4(aVertexPosition, 1.0);
+				vVertex = vec3(mvVertex4) / mvVertex4.w;
+				vec3 mvNormal = vec3(uNMatrix * aVertexNormal);
+				gl_Position = uPMatrix * mvVertex4;
+				
+				vN = normalize(mvNormal);
+				vL = normalize(uLightPosition - vVertex);
+				vFrontColor = aFrontColor;
+			}
 		</script>
 		<script id="gouraud-vs" type="x-shader/x-vertex">
 			attribute vec3 aVertexPosition; 
@@ -119,8 +179,8 @@
 			uniform mat4 uMVMatrix; 
 			uniform mat4 uPMatrix;
 			
-			varying vec3 vNormal;
 			varying vec3 vVertex;
+			varying vec3 vNormal;
 			varying vec3 vFrontColor;
 			
 			void main(void) { 
@@ -162,6 +222,9 @@
 					gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
 					gl.viewportWidth = canvas.width;
 					gl.viewportHeight = canvas.height;
+					if (!gl.getExtension('OES_standard_derivatives')) {
+						throw 'extension not support';
+					}
 				} catch (e) {}
 				if (!gl) {
 					alert("Could not initialise WebGL, sorry :-(");
