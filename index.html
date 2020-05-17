@@ -170,7 +170,10 @@
 			uniform float uSpecularCoefficient; 
 			uniform float uMaterialShininess;
 			
-			uniform vec3 uLightPosition;
+			uniform vec3 uLight1Position;
+			uniform vec3 uLight2Position;
+			uniform vec3 uLight3Position;
+			
 			uniform vec3 uAmbientColor;
 			uniform vec3 uDiffuseColor;
 			uniform vec3 uSpecularColor;
@@ -184,19 +187,40 @@
 				gl_Position = uPMatrix * mvVertex4;
 						
 				vec3 N = normalize(mvNormal);
-				vec3 L = normalize(uLightPosition - mvVertex);
-				// Lambert's cosine law
-				float lambertian = max(dot(N, L), 0.0);
+				vec3 L1 = normalize(uLight1Position - mvVertex);
+				float lambertian = max(dot(N, L1), 0.0);
 				float specular = 0.0;
 				if(lambertian > 0.0) {
-					vec3 R = reflect(-L, N);
+					vec3 R = reflect(-L1, N);
 					vec3 V = normalize(-mvVertex);
-					// Compute the specular term
 					float specAngle = max(dot(R, V), 0.0);
 					specular = pow(specAngle, uMaterialShininess);
-				 }
+				}
+				vec3 color = uAmbientColor * uAmbientCoefficient * aFrontColor + uDiffuseColor * uDiffuseCoefficient * aFrontColor * lambertian + uSpecularColor * uSpecularCoefficient * specular;
 				
-				fragcolor = vec4(uAmbientColor * uAmbientCoefficient * aFrontColor + uDiffuseColor * uDiffuseCoefficient * aFrontColor * lambertian + uSpecularColor * uSpecularCoefficient * specular, 1.0); 
+				vec3 L2 = normalize(uLight2Position - mvVertex);
+				lambertian = max(dot(N, L2), 0.0);
+				specular = 0.0;
+				if(lambertian > 0.0) {
+					vec3 R = reflect(-L2, N);
+					vec3 V = normalize(-mvVertex);
+					float specAngle = max(dot(R, V), 0.0);
+					specular = pow(specAngle, uMaterialShininess);
+				}
+				color += uDiffuseColor * uDiffuseCoefficient * aFrontColor * lambertian + uSpecularColor * uSpecularCoefficient * specular;
+				
+				vec3 L3 = normalize(uLight3Position - mvVertex);
+				lambertian = max(dot(N, L3), 0.0);
+				specular = 0.0;
+				if(lambertian > 0.0) {
+					vec3 R = reflect(-L3, N);
+					vec3 V = normalize(-mvVertex);
+					float specAngle = max(dot(R, V), 0.0);
+					specular = pow(specAngle, uMaterialShininess);
+				}
+				color += uDiffuseColor * uDiffuseCoefficient * aFrontColor * lambertian + uSpecularColor * uSpecularCoefficient * specular;
+				
+				fragcolor = vec4(color, 1.0); 
 			}
 		</script>
 		<script id="phong-vs" type="x-shader/x-vertex">
@@ -673,16 +697,16 @@
 			<tr><td><b>Light Position</b></tr>
 			<tr>
 				<td>Light1</td>
-				<td>X <input type="text" id="light1X" value="-30" /></td>
-				<td>Y <input type="text" id="light1Y" value="20" /></td>
-				<td>Z <input type="text" id="light1Z" value="25" /></td>
+				<td>X <input type="text" id="light1X" value="30" /></td>
+				<td>Y <input type="text" id="light1Y" value="-30" /></td>
+				<td>Z <input type="text" id="light1Z" value="50" /></td>
 			</tr>
 			<tr>
 			<!--<input type="checkbox" id="Light2" checked="checked">-->
 				<td>Light2</td>
-				<td>X <input type="text" id="light2X" value="30" /></td>
-				<td>Y <input type="text" id="light2Y" value="-20" /></td>
-				<td>Z <input type="text" id="light2Z" value="25" /></td>
+				<td>X <input type="text" id="light2X" value="-30" /></td>
+				<td>Y <input type="text" id="light2Y" value="30" /></td>
+				<td>Z <input type="text" id="light2Z" value="50" /></td>
 			</tr>
 			<tr>
 				<td>Light3</td>
