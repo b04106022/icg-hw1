@@ -222,12 +222,12 @@
 					gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
 					gl.viewportWidth = canvas.width;
 					gl.viewportHeight = canvas.height;
-					if (!gl.getExtension('OES_standard_derivatives')) {
-						throw 'extension not support';
-					}
 				} catch (e) {}
 				if (!gl) {
 					alert("Could not initialise WebGL, sorry :-(");
+				}
+				if (!gl.getExtension('OES_standard_derivatives')) {
+					throw 'extension not support';
 				}
 			}
 
@@ -298,11 +298,22 @@
 				
 				return shaderProgram;
 			}
+			/*
+			var currentShader;
+			var shaderSet = {phong:"", gouraud:"", flat:""};
 			function initShaders() {
-				var flatProgram = createProgram("flat-fs", "flat-vs");
-				// var gouraudProgram = createProgram("gouraud-fs", "gouraud-vs");
-				// var phongProgram = createProgram("phong-fs", "phong-vs");
+				shaderSet["phong"] = createProgram("phong-fs", "phong-vs");
+				shaderSet["gouraud"] = createProgram("gouraud-fs", "gouraud-vs");
+				shaderSet["flat"] = createProgram("flat-fs", "flat-vs");
 			}
+			*/
+			
+			function initShaders() {
+				//var flatProgram = createProgram("flat-fs", "flat-vs");
+				//var gouraudProgram = createProgram("gouraud-fs", "gouraud-vs");
+				var phongProgram = createProgram("phong-fs", "phong-vs");
+			}
+			
 
 			function setMatrixUniforms() {
 				gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
@@ -407,6 +418,12 @@
 				request.send();
 			}
 
+			var teapotPosition = {m1:{x:-20,y:0,z:-80}, m2:{x:0,y:0,z:-80}, m3:{x:20,y:0,z:-80}};
+			var teapotScale = {m1:0.5, m2:0.5, m3:0.5};
+			var teapotSpinSpeed = {m1:{x:0,y:0,z:0}, m2:{x:0,y:0,z:0}, m3:{x:0,y:0,z:0}};
+			var teapotSpinAngle = {m1:{x:0,y:0,z:0}, m2:{x:0,y:0,z:0}, m3:{x:0,y:0,z:0}};
+			var teapotShear = {m1:90, m2:90, m3:90};
+			var teapotShade = {m1:"flat", m2:"phong", m3:"gouraud"};
 			/*
 				TODO HERE:
 				add two or more objects showing on the canvas
@@ -433,33 +450,33 @@
 				}
 				
 				gl.uniform3f(
-					shaderProgram.lightingPositionUniform,
-					parseFloat(30),
-					parseFloat(20),
-					parseFloat(-25)
+					shaderProgram.lightPositionUniform,
+					parseFloat(document.getElementById("light1X").value),
+					parseFloat(document.getElementById("light1Y").value),
+					parseFloat(document.getElementById("light1Z").value)
 				);
 				gl.uniform3f(
 					shaderProgram.ambientColorUniform,
-					parseFloat(1),
-					parseFloat(1),
-					parseFloat(1)
+					parseFloat(document.getElementById("ambientR").value),
+					parseFloat(document.getElementById("ambientG").value),
+					parseFloat(document.getElementById("ambientB").value)
 				);
 				gl.uniform3f(
 					shaderProgram.diffuseColorUniform,
-					parseFloat(1),
-					parseFloat(1),
-					parseFloat(1)
+					parseFloat(document.getElementById("diffuseR").value),
+					parseFloat(document.getElementById("diffuseG").value),
+					parseFloat(document.getElementById("diffuseB").value)
 				);
 				gl.uniform3f(
 					shaderProgram.specularColorUniform,
-					parseFloat(1),
-					parseFloat(1),
-					parseFloat(1)
+					parseFloat(document.getElementById("specularR").value),
+					parseFloat(document.getElementById("specularG").value),
+					parseFloat(document.getElementById("specularB").value)
 				);
-				gl.uniform1f(shaderProgram.ambientCoefficientUniform, parseFloat(0.1));
-				gl.uniform1f(shaderProgram.diffuseCoefficientUniform, parseFloat(0.6));
-				gl.uniform1f(shaderProgram.specularCoefficientUniform, parseFloat(0.3));
-				gl.uniform1f(shaderProgram.materialShininessUniform, parseFloat(16));
+				gl.uniform1f(shaderProgram.ambientCoefficientUniform, parseFloat(document.getElementById("ka").value));
+				gl.uniform1f(shaderProgram.diffuseCoefficientUniform, parseFloat(document.getElementById("kd").value));
+				gl.uniform1f(shaderProgram.specularCoefficientUniform, parseFloat(document.getElementById("ks").value));
+				gl.uniform1f(shaderProgram.materialShininessUniform, parseFloat(document.getElementById("materialShininess").value));
 
 				// Setup Projection Matrix
 				mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
@@ -599,6 +616,73 @@
 	<body onload="webGLStart();">
 		<canvas id="ICG-canvas" style="border: none;" width="1280" height="720"></canvas>
 		<br/>
+		<table>
+			<tr>
+				<td><b>Model</b>
+				<td>
+					<input type="radio" name="model" value="teapot" /> Teapot
+					<input type="radio" name="model" value="easter" /> Easter
+					<input type="radio" name="model" value="kangaroo" /> Kangaroo
+				</td>
+			</tr>
+		</table>
+		<table>
+			<tr><td><b>Light Position</b></tr>
+			<tr>
+				<td>Light1</td>
+				<td>X <input type="text" id="light1X" value="-30" /></td>
+				<td>Y <input type="text" id="light1Y" value="20" /></td>
+				<td>Z <input type="text" id="light1Z" value="25" /></td>
+			</tr>
+			<tr>
+			<!--<input type="checkbox" id="Light2" checked="checked">-->
+				<td>Light2</td>
+				<td>X <input type="text" id="light2X" value="30" /></td>
+				<td>Y <input type="text" id="light2Y" value="-20" /></td>
+				<td>Z <input type="text" id="light2Z" value="25" /></td>
+			</tr>
+			<tr>
+				<td>Light3</td>
+				<td>X <input type="text" id="light3X" value="0" /></td>
+				<td>Y <input type="text" id="light3Y" value="0" /></td>
+				<td>Z <input type="text" id="light3Z" value="-50" /></td>
+			</tr>
+		</table>
+		<table>
+			<tr><td><b>Phong Illumination Model</b></td></tr>
+			<tr>
+				<td>Ambient Light</td>
+				<td>ka</td>
+				<td><input type="text" id="ka" value="0.1" /></td>
+				<td>R <input type="text" id="ambientR" value="1" /></td>
+				<td>G <input type="text" id="ambientG" value="1" /></td>
+				<td>B <input type="text" id="ambientB" value="1" /></td>
+			</tr>
+			<tr>
+				<td>Diffuse Reflection</td>
+				<td>kd</td>
+				<td><input type="text" id="kd" value="0.6" /></td>
+				<td>R <input type="text" id="diffuseR" value="1" /></td>
+				<td>G <input type="text" id="diffuseG" value="1" /></td>
+				<td>B <input type="text" id="diffuseB" value="1" /></td>
+			</tr>
+			<tr>
+				<td>Specular Reflection</td>
+				<td>ks</td>
+				<td><input type="text" id="ks" value="0.3" /></td>
+				<td>R <input type="text" id="specularR" value="1" /></td>
+				<td>G <input type="text" id="specularG" value="1" /></td>
+				<td>B <input type="text" id="specularB" value="1" /></td>
+			</tr>
+			<tr>
+				<td>Material Shininess</td>
+				<td></td>
+				<td><input type="text" id="materialShininess" value="20" /></td>
+			</tr>
+		</table>
+		<table>
+			<tr><b>Transformation</b></tr>
+		</table>
 	</body>
 	
 </html>
