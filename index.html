@@ -25,27 +25,50 @@
 			
 			varying vec3 vVertex;
 			varying vec3 vN;
-			varying vec3 vL;
+			varying vec3 vL1;
+			varying vec3 vL2;
+			varying vec3 vL3;
 			varying vec3 vFrontColor;
 			
 			void main(void) { 
 				vec3 dx = dFdx(vVertex);
 				vec3 dy = dFdy(vVertex);
-				
 				vec3 N = normalize(cross(dx, dy));
-				vec3 L = normalize(vL);
-				// Lambert's cosine law
-				float lambertian = max(dot(N, L), 0.0);
+				
+				vec3 L1 = normalize(vL1);
+				float lambertian = max(dot(N, L1), 0.0);
 				float specular = 0.0;
 				if(lambertian > 0.0) {
-					vec3 R = reflect(-L, N);
+					vec3 R = reflect(-L1, N);
 					vec3 V = normalize(-vVertex);
-					// Compute the specular term
 					float specAngle = max(dot(R, V), 0.0);
 					specular = pow(specAngle, uMaterialShininess);
-				 }
+				}
+				vec3 color = uAmbientColor * uAmbientCoefficient * vFrontColor + uDiffuseColor * uDiffuseCoefficient * vFrontColor * lambertian + uSpecularColor * uSpecularCoefficient * specular;
+				 
+				vec3 L2 = normalize(vL2);
+				lambertian = max(dot(N, L2), 0.0);
+				specular = 0.0;
+				if(lambertian > 0.0) {
+					vec3 R = reflect(-L2, N);
+					vec3 V = normalize(-vVertex);
+					float specAngle = max(dot(R, V), 0.0);
+					specular = pow(specAngle, uMaterialShininess);
+				}
+				color += uDiffuseColor * uDiffuseCoefficient * vFrontColor * lambertian + uSpecularColor * uSpecularCoefficient * specular;
+				 
+				vec3 L3 = normalize(vL3);
+				lambertian = max(dot(N, L3), 0.0);
+				specular = 0.0;
+				if(lambertian > 0.0) {
+					vec3 R = reflect(-L3, N);
+					vec3 V = normalize(-vVertex);
+					float specAngle = max(dot(R, V), 0.0);
+					specular = pow(specAngle, uMaterialShininess);
+				}
+				color += uDiffuseColor * uDiffuseCoefficient * vFrontColor * lambertian + uSpecularColor * uSpecularCoefficient * specular;
 				
-				gl_FragColor = vec4(uAmbientColor * uAmbientCoefficient * vFrontColor + uDiffuseColor * uDiffuseCoefficient * vFrontColor * lambertian + uSpecularColor * uSpecularCoefficient * specular, 1.0); 
+				gl_FragColor = vec4(color, 1.0); 
 			}
 		</script>
 		<script id="gouraud-fs" type="x-shader/x-fragment">
@@ -109,11 +132,15 @@
 			uniform mat4 uMVMatrix; 
 			uniform mat4 uPMatrix;
 			
-			uniform vec3 uLightPosition;
+			uniform vec3 uLight1Position;
+			uniform vec3 uLight2Position;
+			uniform vec3 uLight3Position;
 
 			varying vec3 vVertex;
 			varying vec3 vN;
-			varying vec3 vL;
+			varying vec3 vL1;
+			varying vec3 vL2;
+			varying vec3 vL3;
 			varying vec3 vFrontColor;
 			
 			void main(void) { 
@@ -123,7 +150,9 @@
 				gl_Position = uPMatrix * mvVertex4;
 				
 				vN = normalize(mvNormal);
-				vL = normalize(uLightPosition - vVertex);
+				vL1 = normalize(uLight1Position - vVertex);
+				vL2 = normalize(uLight2Position - vVertex);
+				vL3 = normalize(uLight3Position - vVertex);
 				vFrontColor = aFrontColor;
 			}
 		</script>
@@ -291,7 +320,9 @@
 				shaderProgram.specularCoefficientUniform = gl.getUniformLocation(shaderProgram, "uSpecularCoefficient");
 				shaderProgram.materialShininessUniform = gl.getUniformLocation(shaderProgram, "uMaterialShininess");
 				
-				shaderProgram.lightPositionUniform = gl.getUniformLocation(shaderProgram, "uLightPosition");
+				shaderProgram.light1PositionUniform = gl.getUniformLocation(shaderProgram, "uLight1Position");
+				shaderProgram.light2PositionUniform = gl.getUniformLocation(shaderProgram, "uLight2Position");
+				shaderProgram.light3PositionUniform = gl.getUniformLocation(shaderProgram, "uLight3Position");
 				shaderProgram.ambientColorUniform = gl.getUniformLocation(shaderProgram, "uAmbientColor");
 				shaderProgram.diffuseColorUniform = gl.getUniformLocation(shaderProgram, "uDiffuseColor");
 				shaderProgram.specularColorUniform = gl.getUniformLocation(shaderProgram, "uSpecularColor");	
@@ -309,9 +340,9 @@
 			*/
 			
 			function initShaders() {
-				//var flatProgram = createProgram("flat-fs", "flat-vs");
-				//var gouraudProgram = createProgram("gouraud-fs", "gouraud-vs");
-				var phongProgram = createProgram("phong-fs", "phong-vs");
+				var flatProgram = createProgram("flat-fs", "flat-vs");
+				// var gouraudProgram = createProgram("gouraud-fs", "gouraud-vs");
+				// var phongProgram = createProgram("phong-fs", "phong-vs");
 			}
 			
 
@@ -450,10 +481,22 @@
 				}
 				
 				gl.uniform3f(
-					shaderProgram.lightPositionUniform,
+					shaderProgram.light1PositionUniform,
 					parseFloat(document.getElementById("light1X").value),
 					parseFloat(document.getElementById("light1Y").value),
 					parseFloat(document.getElementById("light1Z").value)
+				);
+				gl.uniform3f(
+					shaderProgram.light2PositionUniform,
+					parseFloat(document.getElementById("light2X").value),
+					parseFloat(document.getElementById("light2Y").value),
+					parseFloat(document.getElementById("light2Z").value)
+				);
+				gl.uniform3f(
+					shaderProgram.light3PositionUniform,
+					parseFloat(document.getElementById("light3X").value),
+					parseFloat(document.getElementById("light3Y").value),
+					parseFloat(document.getElementById("light3Z").value)
 				);
 				gl.uniform3f(
 					shaderProgram.ambientColorUniform,
