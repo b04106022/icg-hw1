@@ -796,72 +796,74 @@
 		<canvas id="ICG-canvas" style="border: none;" width="1280" height="720"></canvas>
 		<br/>
 		
-		<table>
-			<tr>
-				<td><b>Mode</b></td>
-				<form method="post" action="" name="modeForm">
-					<td><input type="radio" name="mode" onclick="handleClick(this);" value="transformation" />Transformation</td>
-					<td><input type="radio" name="mode" onclick="handleClick(this);" value="flatShading"/>Flat Shading</td>
-					<td><input type="radio" name="mode" onclick="handleClick(this);" value="gouraudShading" />Gouraud Shading</td>
-					<td><input type="radio" name="mode" onclick="handleClick(this);" value="phongShading"/>Phong Shading</td>
-					<td><input type="radio" name="mode" onclick="handleClick(this);" value="cartoonShading" checked />Cartoon Shading</td>
-				</form>
-			</tr>
-		</table>
-		<table>
-			<tr><td><b>Light Position</b></tr>
-			<tr>
-				<td>Light1</td>
-				<td>X <input type="range" id="light1X" max="500" min="-500" value="30" /></td>
-				<td>Y <input type="range" id="light1Y" max="500" min="-500" value="-30" /></td>
-				<td>Z <input type="range" id="light1Z" max="500" min="-500" value="50" /></td>
-			</tr>
-			<tr>
-				<td>Light2</td>
-				<td>X <input type="range" id="light2X" max="500" min="-500" value="-30" /></td>
-				<td>Y <input type="range" id="light2Y" max="500" min="-500" value="30" /></td>
-				<td>Z <input type="range" id="light2Z" max="500" min="-500" value="50" /></td>
-			</tr>
-			<tr>
-				<td>Light3</td>
-				<td>X <input type="range" id="light3X" max="500" min="-500" value="0" /></td>
-				<td>Y <input type="range" id="light3Y" max="500" min="-500" value="0" /></td>
-				<td>Z <input type="range" id="light3Z" max="500" min="-500" value="-50" /></td>
-			</tr>
-		</table>
-		<table>
-			<tr><td><b>Phong Illumination Model</b></td></tr>
-			<tr>
-				<td>Ambient Light</td>
-				<td>ka</td>
-				<td><input type="number" id="ka" step="0.1" value="0.1" /></td>
-				<td>R <input type="range" id="ambientR" max="1" min="0" step="0.01" value="1" /></td>
-				<td>G <input type="range" id="ambientG" max="1" min="0" step="0.01" value="1" /></td>
-				<td>B <input type="range" id="ambientB" max="1" min="0" step="0.01" value="1" /></td>
-			</tr>
-			<tr>
-				<td>Diffuse Reflection</td>
-				<td>kd</td>
-				<td><input type="number" id="kd" step="0.1" value="0.6" /></td>
-				<td>R <input type="range" id="diffuseR" max="1" min="0" step="0.01" value="1" /></td>
-				<td>G <input type="range" id="diffuseG" max="1" min="0" step="0.01" value="1" /></td>
-				<td>B <input type="range" id="diffuseB" max="1" min="0" step="0.01" value="1" /></td>
-			</tr>
-			<tr>
-				<td>Specular Reflection</td>
-				<td>ks</td>
-				<td><input type="number" id="ks" step="0.1" value="0.3" /></td>
-				<td>R <input type="range" id="specularR" max="1" min="0" step="0.01" value="1" /></td>
-				<td>G <input type="range" id="specularG" max="1" min="0" step="0.01" value="1" /></td>
-				<td>B <input type="range" id="specularB" max="1" min="0" step="0.01" value="1" /></td>
-			</tr>
-			<tr>
-				<td>Material Shininess</td>
-				<td></td>
-				<td><input type="number" id="materialShininess" min="1" value="20" /></td>
-			</tr>
-		</table>
-		
+		<div style="width:100%;height:250px;overflow:auto;">
+			<table>
+				<tr>
+					<td><b>Mode</b></td>
+					<form method="post" action="" name="modeForm">
+						<td><input type="radio" name="mode" onclick="handleClick(this);" value="transformation" />Transformation</td>
+						<td><input type="radio" name="mode" onclick="handleClick(this);" value="flatShading"/>Flat Shading</td>
+						<td><input type="radio" name="mode" onclick="handleClick(this);" value="gouraudShading" />Gouraud Shading</td>
+						<td><input type="radio" name="mode" onclick="handleClick(this);" value="phongShading"/>Phong Shading</td>
+						<td><input type="radio" name="mode" onclick="handleClick(this);" value="cartoonShading" checked />Cartoon Shading</td>
+					</form>
+				</tr>
+			</table>
+			<table>
+				<tr><td><b>Light Position</b></tr>
+				<tr>
+					<td>Light1</td>
+					<td>X <input type="range" id="light1X" max="500" min="-500" value="30" /></td>
+					<td>Y <input type="range" id="light1Y" max="500" min="-500" value="-30" /></td>
+					<td>Z <input type="range" id="light1Z" max="500" min="-500" value="50" /></td>
+				</tr>
+				<tr>
+					<td>Light2</td>
+					<td>X <input type="range" id="light2X" max="500" min="-500" value="-30" /></td>
+					<td>Y <input type="range" id="light2Y" max="500" min="-500" value="30" /></td>
+					<td>Z <input type="range" id="light2Z" max="500" min="-500" value="50" /></td>
+				</tr>
+				<tr>
+					<td>Light3</td>
+					<td>X <input type="range" id="light3X" max="500" min="-500" value="0" /></td>
+					<td>Y <input type="range" id="light3Y" max="500" min="-500" value="0" /></td>
+					<td>Z <input type="range" id="light3Z" max="500" min="-500" value="-50" /></td>
+				</tr>
+			</table>
+			<table>
+				<tr><td><b>Phong Illumination Model</b></td></tr>
+				<tr>
+					<td>Ambient Light</td>
+					<td>ka</td>
+					<td><input type="number" id="ka" step="0.1" value="0.1" /></td>
+					<td>R <input type="range" id="ambientR" max="1" min="0" step="0.01" value="1" /></td>
+					<td>G <input type="range" id="ambientG" max="1" min="0" step="0.01" value="1" /></td>
+					<td>B <input type="range" id="ambientB" max="1" min="0" step="0.01" value="1" /></td>
+				</tr>
+				<tr>
+					<td>Diffuse Reflection</td>
+					<td>kd</td>
+					<td><input type="number" id="kd" step="0.1" value="0.6" /></td>
+					<td>R <input type="range" id="diffuseR" max="1" min="0" step="0.01" value="1" /></td>
+					<td>G <input type="range" id="diffuseG" max="1" min="0" step="0.01" value="1" /></td>
+					<td>B <input type="range" id="diffuseB" max="1" min="0" step="0.01" value="1" /></td>
+				</tr>
+				<tr>
+					<td>Specular Reflection</td>
+					<td>ks</td>
+					<td><input type="number" id="ks" step="0.1" value="0.3" /></td>
+					<td>R <input type="range" id="specularR" max="1" min="0" step="0.01" value="1" /></td>
+					<td>G <input type="range" id="specularG" max="1" min="0" step="0.01" value="1" /></td>
+					<td>B <input type="range" id="specularB" max="1" min="0" step="0.01" value="1" /></td>
+				</tr>
+				<tr>
+					<td>Material Shininess</td>
+					<td></td>
+					<td><input type="number" id="materialShininess" min="1" value="20" /></td>
+				</tr>
+			</table>
+		<br><br><br><br><br><br>
+		</div>
 	</body>
 	
 </html>
