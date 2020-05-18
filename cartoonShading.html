@@ -477,8 +477,8 @@
 			function initShaders() {
 				// var flatProgram = createProgram("flat-fs", "flat-vs");
 				// var gouraudProgram = createProgram("gouraud-fs", "gouraud-vs");
-				var phongProgram = createProgram("phong-fs", "phong-vs");
-				// var cartoonProgram = createProgram("cartoon-fs", "cartoon-vs");
+				// var phongProgram = createProgram("phong-fs", "phong-vs");
+				var cartoonProgram = createProgram("cartoon-fs", "cartoon-vs");
 			}
 			
 
@@ -658,9 +658,8 @@
 
 				// Setup Teapot Model-View Matrix
 				mat4.identity(mvMatrix);
-				mat4.translate(mvMatrix, [parseFloat(document.getElementById("teapotX").value), parseFloat(document.getElementById("teapotY").value), parseFloat(document.getElementById("teapotZ").value)]);
+				mat4.translate(mvMatrix, [0, 0, -50]);
 				mat4.rotate(mvMatrix, degToRad(teapotAngle), [0, 1, 0]);
-				mat4.scale(mvMatrix, [parseFloat(document.getElementById("teapotScaleX").value), parseFloat(document.getElementById("teapotScaleY").value), parseFloat(document.getElementById("teapotScaleZ").value)]);
 				setMatrixUniforms();
 				// Setup teapot position data
 				gl.bindBuffer(gl.ARRAY_BUFFER, teapotVertexPositionBuffer);
@@ -690,10 +689,9 @@
 				
 				// Setup Easter Model-View Matrix
 				mat4.identity(mvMatrix);
-				mat4.translate(mvMatrix, [parseFloat(document.getElementById("easterX").value), parseFloat(document.getElementById("easterY").value), parseFloat(document.getElementById("easterZ").value)]);
+				mat4.translate(mvMatrix, [-5, 0, -10]);
 				mat4.rotate(mvMatrix, 4.75, [1, 0, 0]);
 				mat4.rotate(mvMatrix, degToRad(easterAngle), [0, 1, 0]);
-				mat4.scale(mvMatrix, [parseFloat(document.getElementById("easterScaleX").value), parseFloat(document.getElementById("easterScaleY").value), parseFloat(document.getElementById("easterScaleZ").value)]);
 				setMatrixUniforms();
 				// Setup easter position data
 				gl.bindBuffer(gl.ARRAY_BUFFER, easterVertexPositionBuffer);
@@ -724,10 +722,9 @@
 				
 				// Setup Kangaroo Model-View Matrix
 				mat4.identity(mvMatrix);
-				mat4.translate(mvMatrix, [parseFloat(document.getElementById("kangarooX").value), parseFloat(document.getElementById("kangarooY").value), parseFloat(document.getElementById("kangarooZ").value)]);
+				mat4.translate(mvMatrix, [3, 0, -6]);
 				mat4.rotate(mvMatrix, 30, [1, 0, 0]);
 				mat4.rotate(mvMatrix, -degToRad(kangarooAngle), [1, 0, 0]);
-				mat4.scale(mvMatrix, [parseFloat(document.getElementById("kangarooScaleX").value), parseFloat(document.getElementById("kangarooScaleY").value), parseFloat(document.getElementById("kangarooScaleZ").value)]);
 				setMatrixUniforms();
 				// Setup kangaroo position data
 				gl.bindBuffer(gl.ARRAY_BUFFER, kangarooVertexPositionBuffer);
@@ -804,10 +801,10 @@
 				<td><b>Mode</b></td>
 				<form method="post" action="" name="modeForm">
 					<td><input type="radio" name="mode" onclick="handleClick(this);" value="transformation" />Transformation</td>
-					<td><input type="radio" name="mode" onclick="handleClick(this);" value="flatShading" />Flat Shading</td>
+					<td><input type="radio" name="mode" onclick="handleClick(this);" value="flatShading"/>Flat Shading</td>
 					<td><input type="radio" name="mode" onclick="handleClick(this);" value="gouraudShading" />Gouraud Shading</td>
-					<td><input type="radio" name="mode" onclick="handleClick(this);" value="phongShading" />Phong Shading</td>
-					<td><input type="radio" name="mode" onclick="handleClick(this);" value="cartoonShading" />Cartoon Shading</td>
+					<td><input type="radio" name="mode" onclick="handleClick(this);" value="phongShading"/>Phong Shading</td>
+					<td><input type="radio" name="mode" onclick="handleClick(this);" value="cartoonShading" checked />Cartoon Shading</td>
 				</form>
 			</tr>
 		</table>
@@ -820,7 +817,6 @@
 				<td>Z <input type="range" id="light1Z" max="500" min="-500" value="50" /></td>
 			</tr>
 			<tr>
-			<!--<input type="checkbox" id="Light2" checked="checked">-->
 				<td>Light2</td>
 				<td>X <input type="range" id="light2X" max="500" min="-500" value="-30" /></td>
 				<td>Y <input type="range" id="light2Y" max="500" min="-500" value="30" /></td>
@@ -863,53 +859,6 @@
 				<td>Material Shininess</td>
 				<td></td>
 				<td><input type="number" id="materialShininess" min="1" value="20" /></td>
-			</tr>
-		</table>
-		<br>
-		<table>
-			<tr><td><b>Transformation</b></td></tr>
-			<tr>
-				<td><b>Translation</b></td>
-				<td></td>
-				<td></td>
-				<td><b>Scale</b></td>
-			</tr>
-			<tr>
-				<td>Easter</td>
-				<td>Teapot</td>
-				<td>Kangaroo</td>
-				<td>Easter</td>
-				<td>Teapot</td>
-				<td>Kangaroo</td>
-			</tr>
-			<tr>
-				<td>X <input type="range" id="easterX" max="8" min="-8" step="0.1" value="-5" /></td>
-				<td>X <input type="range" id="teapotX" max="50" min="-50" value="0" /></td>
-				<td>X <input type="range" id="kangarooX" max="5" min="-5" step="0.1"  value="3" /></td>
-				<td>ScaleX <input type="range" id="easterScaleX" max="2.5" min="0.5" step="0.1" value="1" /></td>
-				<td>ScaleX <input type="range" id="teapotScaleX" max="2.5" min="0.5" step="0.1" value="1" /></td>
-				<td>ScaleX <input type="range" id="kangarooScaleX" max="2.5" min="0.5" step="0.1" value="1" /></td>
-			</tr>
-			<tr>
-				<td>Y <input type="range" id="easterY" max="5" min="-5" step="0.1"  value="0" /></td>
-				<td>Y <input type="range" id="teapotY" max="30" min="-30" value="0" /></td>
-				<td>Y <input type="range" id="kangarooY" max="3" min="-3" step="0.1"  value="0" /></td>
-				<td>ScaleY <input type="range" id="easterScaleY" max="2.5" min="0.5" step="0.1" value="1" /></td>
-				<td>ScaleY <input type="range" id="teapotScaleY" max="2.5" min="0.5" step="0.1" value="1" /></td>
-				<td>ScaleY <input type="range" id="kangarooScaleY" max="2.5" min="0.5" step="0.1" value="1" /></td>
-			</tr>
-			<tr>
-				<td>Z <input type="range" id="easterZ" max="-3" min="-20" step="0.1"  value="-10" /></td>
-				<td>Z <input type="range" id="teapotZ" max="-20" min="-90" value="-50" /></td>
-				<td>Z <input type="range" id="kangarooZ" max="-1" min="-20" step="0.1"  value="-6" /></td>
-				<td>ScaleZ <input type="range" id="easterScaleZ" max="2" min="0.5" step="0.1" value="1" /></td>
-				<td>ScaleZ <input type="range" id="teapotScaleZ" max="2.5" min="0.5" step="0.1" value="1" /></td>
-				<td>ScaleZ <input type="range" id="kangarooScaleZ" max="2" min="0.5" step="0.1" value="1" /></td>
-			</tr>
-			<tr>
-				<td>Shear</td>
-				<td>Shear</td>
-				<td>Shear</td>
 			</tr>
 		</table>
 		
